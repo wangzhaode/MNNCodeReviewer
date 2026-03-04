@@ -1,4 +1,4 @@
-name: Code Review
+name: MNN Code Review
 
 permissions:
   contents: read
@@ -16,7 +16,9 @@ jobs:
       - uses: anc95/ChatGPT-CodeReview@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LANGUAGE: English
+          LANGUAGE: Chinese
           USE_GITHUB_MODELS: true
           LOG_LEVEL: debug
-          INCLUDE_PATTERNS: src/*,.github/**/*
+          max_tokens: 10240
+          MAX_PATCH_LENGTH: 204800
+          IGNORE_PATTERNS: "**/*.md,**/*.yml"

@@ -1,8 +1,8 @@
-name: ChatGPT CodeReviewer
-description: 'A Code Review Action Powered By ChatGPT'
+name: MNNCodeReviewer
+description: 'A Code Review Action Powered By AI - Specialized for MNN (Mobile Neural Network)'
 branding:
-  icon: 'gift'
-  color: orange
+  icon: 'cpu'
+  color: blue
 runs:
   using: 'node20'
   main: 'action/index.cjs'

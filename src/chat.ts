@@ -34,22 +34,35 @@ export class Chat {
         ? `Answer me in ${process.env.LANGUAGE},`
         : '';
 
-    const userPrompt = process.env.PROMPT || 'Please review the following code patch. Focus on potential bugs, risks, and improvement suggestions.';
+    // MNN 专用的前置提示词
+    const mnnSystemPrompt = `你是 MNN (Mobile Neural Network) 项目的代码审查助手。MNN 是阿里巴巴开发的轻量级深度学习推理框架。
+
+在代码审查时请重点关注以下方面：
+1. **性能优化**：MNN 专为移动端高性能设计。请关注潜在的性能瓶颈、不必要的内存分配或低效算法。
+2. **跨平台兼容性**：确保代码能在不同平台（iOS、Android、Linux、Windows、macOS）上正常运行。
+3. **内存管理**：特别关注内存泄漏、缓冲区溢出和资源释放问题。
+4. **API 一致性**：确保新代码遵循 MNN 现有的 API 风格和命名规范。
+5. **错误处理**：验证边界情况的错误处理和优雅降级。
+6. **线程安全**：检查多线程代码中的竞态条件和同步问题。
+
+`;
+
+    const userPrompt = process.env.PROMPT || '请审查以下代码变更，重点关注潜在的 bug、风险和改进建议。';
     
-    const jsonFormatRequirement = '\nProvide your feedback in a strict JSON format with the following structure:\n' +
+    const jsonFormatRequirement = '\n请按以下 JSON 格式返回你的审查意见：\n' +
         '{\n' +
         '  "reviews": [\n' +
         '    {\n' +
-        '      "hunk_header": string, // The @@ hunk header (e.g., "@@ -10,5 +10,7 @@"), optional\n' +
-        '      "lgtm": boolean, // true if this hunk looks good, false if there are concerns\n' +
-        '      "review_comment": string // Your detailed review comments for this hunk. Can use markdown syntax. Empty string if lgtm is true.\n' +
+        '      "hunk_header": string, // 代码块的 @@ 行号标记（如 "@@ -10,5 +10,7 @@"），可选\n' +
+        '      "lgtm": boolean, // 如果这段代码看起来没问题则为 true，有需要改进的地方则为 false\n' +
+        '      "review_comment": string // 详细的审查意见，支持 markdown 格式。如果 lgtm 为 true 则为空字符串\n' +
         '    }\n' +
         '  ]\n' +
         '}\n' +
-        'Review each hunk (marked by @@) separately and provide feedback for hunks that need improvement.\n' +
-        'Ensure your response is a valid JSON object with a reviews array.\n';
+        '请分别审查每个代码块（以 @@ 标记），对需要改进的代码块给出反馈。\n' +
+        '确保返回的是有效的 JSON 对象，包含 reviews 数组。\n';
 
-    return `${userPrompt}${jsonFormatRequirement} ${answerLanguage}:
+    return `${mnnSystemPrompt}${userPrompt}${jsonFormatRequirement} ${answerLanguage}:
     ${patch}
     `;
   };

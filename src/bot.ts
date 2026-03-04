@@ -9,6 +9,33 @@ const MAX_PATCH_COUNT = process.env.MAX_PATCH_LENGTH
   ? +process.env.MAX_PATCH_LENGTH
   : Infinity;
 
+// 随机有趣的 review 签名消息
+const getRandomReviewSignature = () => {
+  const signatures = [
+    '🤖 MNN Bot 已完成代码审查 - 让神经网络更轻量！',
+    '🧠 MNN 代码审查完毕 - 专为速度优化！',
+    '⚡ 闪电般的代码审查，由 MNN AI 驱动',
+    '🔍 代码审查完成 - MNN 风格！',
+    '🚀 你的代码已被 MNN 审查员分析完毕',
+    '💡 来自 MNN 助手的智能建议',
+    '🎯 MNN 精准代码审查已送达',
+    '✨ MNN 审查魔法已施展完毕',
+    '🌟 又一次高质量的 MNN 代码审查',
+    '🔮 MNN 预言机对代码发表了意见',
+    '🎭 MNN 代码剧场：你的代码是主角！',
+    '🌈 MNN 审查彩虹：为更好的代码增添色彩',
+    '🎸 MNN Bot 带来稳如磐石的审查',
+    '🎬 开拍！MNN Bot 已审查你的变更',
+    '🦾 MNN 审查超能力已加持代码质量',
+    '🍕 新鲜出炉：MNN 代码审查，加量不加价！',
+    '🎮 升级！MNN Bot 已批准本次审查',
+    '🎈 有了 MNN 审查，代码水平更上一层楼',
+    '🔮 MNN 水晶球显示：代码已审查完毕！',
+    '🎪 快来围观！MNN Bot 已完成代码审查！',
+  ];
+  return signatures[Math.floor(Math.random() * signatures.length)];
+};
+
 export const robot = (app: Probot) => {
   const loadChat = async (context: Context) => {
     if (process.env.USE_GITHUB_MODELS === 'true' && process.env.GITHUB_TOKEN) {
@@ -103,7 +130,7 @@ export const robot = (app: Probot) => {
           const botReview = reviews
             .slice()
             .reverse()
-            .find((r) => r.body && (r.body.startsWith('Code review by ChatGPT') || r.body.startsWith('LGTM')));
+            .find((r) => r.body && (r.body.includes('MNN') || r.body.startsWith('LGTM')));
 
           if (botReview?.commit_id) {
             const {
@@ -245,7 +272,7 @@ export const robot = (app: Probot) => {
           repo: repo.repo,
           owner: repo.owner,
           pull_number: context.pullRequest().pull_number,
-          body: ress.length ? "Code review by ChatGPT" : "LGTM 👍",
+          body: ress.length ? getRandomReviewSignature() : "LGTM 👍",
           event: 'COMMENT',
           commit_id: context.payload.pull_request.head.sha,
           comments: ress,
